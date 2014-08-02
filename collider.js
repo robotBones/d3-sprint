@@ -10,7 +10,16 @@ var gameStats = {
   bestScore: 0
 }
 
+var enemyOptions = {
+  r: 10
+}
 
+var playerOptions = {
+  size: 20,
+  hitBox: 25
+}
+
+//playerOptions.hitBox = playerOptions.size/2 + enemyOptions.r/2;
 
 
 
@@ -31,9 +40,6 @@ var svg = d3.select("body")
   .style("background-color", "white");
 
 
-
-
-
 // generating new circles
 var update = function(){
 
@@ -49,7 +55,7 @@ var update = function(){
     .attr({
       cx:function(d) { return d * Math.random()},
       cy:function(d) { return d * Math.random()},
-      r:10,
+      r: enemyOptions.r,
       fill: "black"
     })
     .classed("enemies", true);
@@ -69,10 +75,12 @@ var update = function(){
 update();
 
 setInterval(function(){
-  // console.log((new Date).getSeconds());
   update();
 }, 1000);
 
+setInterval(function(){
+  (detectCollision()) ? console.log('touched') : console.log("bjhdsb");
+}, 100);
 
 
 
@@ -89,22 +97,49 @@ var drag = d3.behavior.drag()
 
 var makePlayer = function(){
 
-    var w = 80;
-    var h = 30;
+    var w = 20;
+    var h = 20;
     svg
       .append("rect")
       .attr({
         fill: "#ff0000",
         stroke: "#110404",
         "stroke-width": 5,
-        width: w,
-        height: h,
-        x: gameOptions.width/2 -w/2,
+        width: playerOptions.size,
+        height: playerOptions.size,
+        x: 0,//gameOptions.width/2 -w/2,
         y: gameOptions.height/2 - h/2
       })
       .classed("player", true);
 };
 //Player.init(gameOptions.width/2, gameOptions.height/2);
+//
+
+var detectCollision = function(){
+  var enemies = d3.selectAll(".enemies");
+  var enemy;
+  var player = d3.select(".player");
+  var pX = player.attr("x");
+  var pY = player.attr("y");
+
+  var hasCollision = false;
+
+  enemies.each( function(d, i){
+    enemy = d3.select(this);
+    var eX = enemy.attr("cx");
+    var eY = enemy.attr("cy");
+
+    var mX = Math.pow(Math.abs(eX - pX),2);
+    var mY = Math.pow(Math.abs(eY - pY),2);
+
+    var distance = Math.sqrt(mX + mY);
+
+    if(distance < playerOptions.hitBox){
+      hasCollision = true;
+    }
+  });
+  return hasCollision;
+};
 
 makePlayer();
 d3.selectAll(".player").call(drag);
