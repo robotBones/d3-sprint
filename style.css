@@ -2,3 +2,10 @@ body {
   background-color: black;
   height:600px;
 }
+
+#stats {
+  width: 100px;
+  height: 100px;
+  float: right;
+  background-color: white;
+}

@@ -6,8 +6,9 @@ var gameOptions = {
 }
 
 var gameStats = {
-  score: 0,
-  bestScore: 0
+  score: 10,
+  highScore: 0,
+  startTime:+new Date
 }
 
 var enemyOptions = {
@@ -30,6 +31,7 @@ var genEnemies = function(){
   }
   return list;
 }
+
 //create main svg element
 var svg = d3.select("body")
   .append("svg")
@@ -60,8 +62,11 @@ var update = function(){
     })
     .classed("enemies", true);
 
-  // changing positions of each circle
+  // this chain changes positions of each existing circle
   enemies
+    .transition()
+    .delay(30)
+    .duration(800)
     .attr({
         //transform: function(d){"translate ("+ d * Math.random()+ ',' + d* Math.random() + ")"},
         cx:function(d) { return d * Math.random()},
@@ -80,11 +85,12 @@ setInterval(function(){
 
 setInterval(function(){
   (detectCollision()) ? console.log('touched') : console.log("bjhdsb");
+  updateScore();
 }, 100);
 
 
 
-// sets up D3 drag listener. Don't really how.
+// sets up D3 drag listener.
 var drag = d3.behavior.drag()
     .on("drag", function(){
       d3.select(this)
@@ -136,18 +142,49 @@ var detectCollision = function(){
 
     if(distance < playerOptions.hitBox){
       hasCollision = true;
+      gameStats.score = 0;
+      gameStats.startTime = +new Date;
     }
   });
   return hasCollision;
 };
 
+var updateScore = function(){
+  var start = gameStats.startTime;
+  // count time since game start
+  var now = +new Date;
+  // set score to time passed since...
+  //gameOptions.lastTime = now - last;
+  //console.log(Math.floor((now -last )/ 100));
+
+  gameStats.score = Math.floor((now - start )/ 100);
+
+  d3.select("#score")
+    .text(gameStats.score);
+
+  d3.select("#highScore")
+    .text(gameStats.highScore);
+};
+
+
+
+
 makePlayer();
 d3.selectAll(".player").call(drag);
 
+//score increases every 1/10th second
+//
 
 
-
-
+// each time the enemies reset,
+// if you aren't hit
+  // increment keeps incrementing
+// if you are hit,
+  // player die;
+  // compare current score to high score
+  // if current score > high score
+    // set high score to current score
+  // score is reset to zero.
 
 
 
