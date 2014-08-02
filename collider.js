@@ -12,7 +12,9 @@ var gameStats = {
 }
 
 var enemyOptions = {
-  r: 10
+  rx: 10,
+  ry: 15,
+  angle: 0
 }
 
 var playerOptions = {
@@ -28,6 +30,9 @@ var genEnemies = function(){
   var list = [];
   for(var i = 0; i < gameOptions.nEnemies; i++){
     list.push(Math.floor(Math.random() * gameOptions.width));
+    // list.push({
+
+    // });
   }
   return list;
 }
@@ -42,40 +47,38 @@ var svg = d3.select("body")
   .style("background-color", "white");
 
 
-// generating new circles
+// generating new ellipses
 var update = function(){
 
   var newData = genEnemies();
-  var enemies = svg.selectAll("circle").data(newData);
+  var enemies = svg.selectAll("ellipse").data(newData);
 
-  //first time update is run, it will create and append circles.
+  //first time update is run, it will create and append ellipses.
   // subsequent runs, this chain will be skipped because
   // enter() will not return any item.
   enemies
     .enter()
-    .append("circle")
+    .append("ellipse")
     .attr({
-      cx:function(d) { return d * Math.random()},
-      cy:function(d) { return d * Math.random()},
-      r: enemyOptions.r,
+      cx:function(d) { return Math.random() * d; },
+      cy:function(d) { return Math.random() * d; },
+      rx: enemyOptions.rx,
+      ry: enemyOptions.ry,
       fill: "black"
     })
     .classed("enemies", true);
 
-  // this chain changes positions of each existing circle
+  // this chain changes positions of each existing ellipse
   enemies
     .transition()
     .delay(30)
     .duration(800)
     .attr({
-        //transform: function(d){"translate ("+ d * Math.random()+ ',' + d* Math.random() + ")"},
-        cx:function(d) { return d * Math.random()},
-        cy:function(d) { return d * Math.random()},
+      cx:function(d) { return Math.random() * d; },
+      cy:function(d) { return Math.random() * d; },
+      transform: function(d){ return "rotate(" + d +","+ d+"," + d+")";}
     });
 }
-// .attr 'transform',
-//       "translate(#{@getX()},#{@getY()})"
-
 
 update();
 
@@ -141,6 +144,7 @@ var detectCollision = function(){
     var distance = Math.sqrt(mX + mY);
 
     if(distance < playerOptions.hitBox){
+      gameStats.highScore = Math.max(gameStats.score, gameStats.highScore);
       hasCollision = true;
       gameStats.score = 0;
       gameStats.startTime = +new Date;
@@ -158,6 +162,7 @@ var updateScore = function(){
   //console.log(Math.floor((now -last )/ 100));
 
   gameStats.score = Math.floor((now - start )/ 100);
+
 
   d3.select("#score")
     .text(gameStats.score);

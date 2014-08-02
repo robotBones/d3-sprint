@@ -4,8 +4,10 @@ body {
 }
 
 #stats {
+  padding: 10px;
   width: 100px;
-  height: 100px;
-  float: right;
+  height: 200px;
+  left: 920px;
   background-color: white;
+  position: absolute;
 }
