@@ -1,6 +1,6 @@
 var gameOptions = {
-  height: 900,
-  width: 600,
+  height: 600,
+  width: 900,
   nEnemies: 30,
   padding: 20
 }
@@ -9,6 +9,10 @@ var gameStats = {
   score: 0,
   bestScore: 0
 }
+
+
+
+
 
 var genEnemies = function(){
   var list = [];
@@ -27,8 +31,12 @@ var svg = d3.select("body")
   .style("background-color", "white");
 
 
+
+
+
 // generating new circles
 var update = function(){
+
   var newData = genEnemies();
   var enemies = svg.selectAll("circle").data(newData);
 
@@ -49,11 +57,13 @@ var update = function(){
   // changing positions of each circle
   enemies
     .attr({
+        //transform: function(d){"translate ("+ d * Math.random()+ ',' + d* Math.random() + ")"},
         cx:function(d) { return d * Math.random()},
         cy:function(d) { return d * Math.random()},
     });
 }
-
+// .attr 'transform',
+//       "translate(#{@getX()},#{@getY()})"
 
 
 update();
@@ -66,17 +76,45 @@ setInterval(function(){
 
 
 
+// sets up D3 drag listener. Don't really how.
+var drag = d3.behavior.drag()
+    .on("drag", dragmove);
+
+// function that performs dragging
+var dragmove = function(){
+  console.log('drag');
+  // d3.select(this)
+  //   .attr('x', d.x = d3.event.x)
+  //   .attr('x', d.x = d3.event.y)
+};
+
+
+
+var makePlayer = function(){
+
+    var w = 80;
+    var h = 30;
+    svg
+      .append("rect")
+      .attr({
+        fill: "#ff0000",
+        stroke: "#110404",
+        "stroke-width": 5,
+        width: w,
+        height: h,
+        x: gameOptions.width/2 -w/2,
+        y: gameOptions.height/2 - h/2
+      })
+      .classed("player", true);
+};
+//Player.init(gameOptions.width/2, gameOptions.height/2);
+
+makePlayer();
 
 
 
 
-
-
-
-
-
-
-
+d3.selectAll("svg").call(drag);
 
 
 
