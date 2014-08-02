@@ -78,16 +78,13 @@ setInterval(function(){
 
 // sets up D3 drag listener. Don't really how.
 var drag = d3.behavior.drag()
-    .on("drag", dragmove);
-
-// function that performs dragging
-var dragmove = function(){
-  console.log('drag');
-  // d3.select(this)
-  //   .attr('x', d.x = d3.event.x)
-  //   .attr('x', d.x = d3.event.y)
-};
-
+    .on("drag", function(){
+      d3.select(this)
+        .attr({
+          x: d3.event.x,
+          y: d3.event.y
+        });
+    });
 
 
 var makePlayer = function(){
@@ -110,11 +107,7 @@ var makePlayer = function(){
 //Player.init(gameOptions.width/2, gameOptions.height/2);
 
 makePlayer();
-
-
-
-
-d3.selectAll("svg").call(drag);
+d3.selectAll(".player").call(drag);
 
 
 
