@@ -35,9 +35,7 @@ var svg = d3.select("body")
   .style("background-color", "white");
 
 
-
-
-// generating new ellipses
+// generating new enemies
 var enemies = svg.selectAll("ellipse")
   .data(d3.range(gameOptions.nEnemies));
 
@@ -66,10 +64,12 @@ var update = function(element){
       cy:function(d) { return Math.random() * gameOptions.height ; },
       //transform: function(d){ return "rotate(" + d +","+ d+"," + d+")";}
     })
+    // call update() at end of transition in order to chain
+    // transitions together. This allows us to use d3 timer mechanism
+    // instead of setInterval(update(), time)
     .each('end', function(){
       update(d3.select(this))
     });
-
 };
 
 update(enemies);
@@ -79,7 +79,6 @@ setInterval(function(){
   (detectCollision()) ? console.log('touched') : console.log("bjhdsb");
   updateScore();
 }, 100);
-
 
 
 // sets up D3 drag listener.
@@ -132,6 +131,7 @@ var detectCollision = function(){
 
     var distance = Math.sqrt(mX + mY);
 
+    // if there is a hit, reset score and compare high score
     if(distance < playerOptions.hitBox){
       gameStats.highScore = Math.max(gameStats.score, gameStats.highScore);
       hasCollision = true;
@@ -146,12 +146,8 @@ var updateScore = function(){
   var start = gameStats.startTime;
   // count time since game start
   var now = +new Date;
-  // set score to time passed since...
-  //gameOptions.lastTime = now - last;
-  //console.log(Math.floor((now -last )/ 100));
 
   gameStats.score = Math.floor((now - start )/ 100);
-
 
   d3.select("#score")
     .text(gameStats.score);
@@ -161,24 +157,8 @@ var updateScore = function(){
 };
 
 
-
-
 makePlayer();
 d3.selectAll(".player").call(drag);
-
-//score increases every 1/10th second
-//
-
-
-// each time the enemies reset,
-// if you aren't hit
-  // increment keeps incrementing
-// if you are hit,
-  // player die;
-  // compare current score to high score
-  // if current score > high score
-    // set high score to current score
-  // score is reset to zero.
 
 
 
