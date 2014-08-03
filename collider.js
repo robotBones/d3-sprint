@@ -34,36 +34,25 @@ var svg = d3.select("body")
   })
   .style("background-color", "white");
 
-var genEnemies = function(){
-  var list = [];
-  for(var i = 0; i < gameOptions.nEnemies; i++){
-    list.push(Math.floor(Math.random() * gameOptions.width));
-    // list.push({
-
-    // });
-  }
-  return list;
-}
 
 
 
 // generating new ellipses
+var enemies = svg.selectAll("ellipse")
+  .data(d3.range(gameOptions.nEnemies));
 
-  var newData = genEnemies();
-  var enemies = svg.selectAll("ellipse").data(newData);
-
-  //create and append enemies to the page.
-  enemies
-    .enter()
-    .append("ellipse")
-    .attr({
-     cx:function(d) { return Math.random() * gameOptions.width ; },
-     cy:function(d) { return Math.random() * gameOptions.height ; },
-      rx: enemyOptions.rx,
-      ry: enemyOptions.ry,
-      fill: "black"
-    })
-    .classed("enemies", true);
+//create and append enemies to the page.
+enemies
+  .enter()
+  .append("ellipse")
+  .attr({
+   cx:function(d) { return Math.random() * gameOptions.width ; },
+   cy:function(d) { return Math.random() * gameOptions.height ; },
+    rx: enemyOptions.rx,
+    ry: enemyOptions.ry,
+    fill: "black"
+  })
+  .classed("enemies", true);
 
 // first invocation: update the position for existing enemies
 // subsequent invoation: update the position for one enemy
