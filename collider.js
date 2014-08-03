@@ -25,6 +25,14 @@ var playerOptions = {
 //playerOptions.hitBox = playerOptions.size/2 + enemyOptions.r/2;
 
 
+//create main svg element
+var svg = d3.select("body")
+  .append("svg")
+  .attr({
+    width:gameOptions.width,
+    height:gameOptions.height,
+  })
+  .style("background-color", "white");
 
 var genEnemies = function(){
   var list = [];
@@ -37,54 +45,46 @@ var genEnemies = function(){
   return list;
 }
 
-//create main svg element
-var svg = d3.select("body")
-  .append("svg")
-  .attr({
-    width:gameOptions.width,
-    height:gameOptions.height,
-  })
-  .style("background-color", "white");
 
 
 // generating new ellipses
-var update = function(){
 
   var newData = genEnemies();
   var enemies = svg.selectAll("ellipse").data(newData);
 
-  //first time update is run, it will create and append ellipses.
-  // subsequent runs, this chain will be skipped because
-  // enter() will not return any item.
+  //create and append enemies to the page.
   enemies
     .enter()
     .append("ellipse")
     .attr({
-      cx:function(d) { return Math.random() * d; },
-      cy:function(d) { return Math.random() * d; },
+     cx:function(d) { return Math.random() * gameOptions.width ; },
+     cy:function(d) { return Math.random() * gameOptions.height ; },
       rx: enemyOptions.rx,
       ry: enemyOptions.ry,
       fill: "black"
     })
     .classed("enemies", true);
 
-  // this chain changes positions of each existing ellipse
-  enemies
+// first invocation: update the position for existing enemies
+// subsequent invoation: update the position for one enemy
+var update = function(element){
+  element
     .transition()
     .delay(30)
     .duration(800)
     .attr({
-      cx:function(d) { return Math.random() * d; },
-      cy:function(d) { return Math.random() * d; },
-      transform: function(d){ return "rotate(" + d +","+ d+"," + d+")";}
+      cx:function(d) { return Math.random() * gameOptions.width ; },
+      cy:function(d) { return Math.random() * gameOptions.height ; },
+      //transform: function(d){ return "rotate(" + d +","+ d+"," + d+")";}
+    })
+    .each('end', function(){
+      update(d3.select(this))
     });
-}
 
-update();
+};
 
-setInterval(function(){
-  update();
-}, 1000);
+update(enemies);
+
 
 setInterval(function(){
   (detectCollision()) ? console.log('touched') : console.log("bjhdsb");
